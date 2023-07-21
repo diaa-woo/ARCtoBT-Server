@@ -151,3 +151,9 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# log file
+log.md
+
+# auth file
+auth.txt
