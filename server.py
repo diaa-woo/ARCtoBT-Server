@@ -13,8 +13,12 @@ def login():
     if len(request.get_data()) == 0:
         return 'null'
     params = json.loads(request.get_data(), encoding='utf-8')
-   
-    return params
+    
+    auth = open('auth.txt', 'r')
+    if params['id']==auth.readline():
+        return '성공!'
+    else:
+        return '?'
 
 if __name__ == '__main__':
     wlan_address = subprocess.check_output(["hostname", "-I"]).decode().split()[0]      # hostname -I를 통해 파악 후, 상황에 따라 인덱스 값 변경
