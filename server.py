@@ -1,9 +1,7 @@
 from flask import Flask, request, json
 import subprocess
-import requests
 import string
 import random
-import atexit
 
 app = Flask(__name__)
 
