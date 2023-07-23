@@ -1,8 +1,13 @@
 from flask import Flask, request, json
 import subprocess
 import requests
+import string
+import random
+import atexit
 
 app = Flask(__name__)
+
+_LENGTH = 10
 
 @app.route('/')
 def index():
@@ -10,16 +15,33 @@ def index():
 
 @app.route('/login', methods=['POST'])
 def login():
+    db = open('db.txt', 'a')
     if len(request.get_data()) == 0:
         return 'null'
     params = json.loads(request.get_data(), encoding='utf-8')
     
-    auth = open('auth.txt', 'r')
-    if params['id']==auth.readline():
-        return '성공!'
+    print(params)
+
+    if params['id']==_PW:
+        string_pool = string.ascii_letters
+        key = ""
+        for i in range(_LENGTH):
+            key += random.choice(string_pool)
+        db.write(key+'\n')
+        db.close()
+        return key
     else:
+        db.close()
         return '?'
 
+
 if __name__ == '__main__':
+    db = open('db.txt', 'w')
+    db.close()
+
+    auth = open('auth.txt', 'r')
+    _PW = auth.readline()
+    auth.close()
+
     wlan_address = subprocess.run(["hostname", "-I"], capture_output=True).stdout.decode().split()[0]     # hostname -I를 통해 파악 후, 상황에 따라 인덱스 값 변경
     app.run(host=wlan_address, debug=True)       
