@@ -25,6 +25,7 @@ import time
 import pexpect
 import subprocess
 import sys
+import re
 
 class BluetoothctlError(Exception):
     """This exception is raised, when bluetoothctl fails to start."""
@@ -47,7 +48,7 @@ class Bluetoothctl:
         if start_failed:
             raise BluetoothctlError("Bluetoothctl failed after running " + command)
 
-        return self.child.before.split("\r\n")
+        return self.child.before.decode().split("\r\n")
 
     def start_scan(self):
         """Start bluetooth scanning process."""
@@ -68,10 +69,15 @@ class Bluetoothctl:
     def parse_device_info(self, info_string):
         """Parse a string corresponding to a device."""
         device = {}
-        block_list = ["[\x1b[0;", "removed"]
+        block_list = ["[\x1b[0;", "removed", "RSSI", "ManufacturerData Key", "ManufacturerData Value",]     # 0번째 인자는 색상
         string_valid = not any(keyword in info_string for keyword in block_list)
+        name_checker = re.compile("([0-9A-Z]{2}-+)+([0-9A-Z]{2})")
 
-        if string_valid:
+        # print(info_string)
+
+        if re.search(name_checker, info_string) :
+            pass
+        elif string_valid:
             try:
                 device_position = info_string.index("Device")
             except ValueError:
