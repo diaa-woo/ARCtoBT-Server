@@ -2,6 +2,7 @@ from flask import Flask, request, json
 import subprocess
 import string
 import random
+import time
 from Bluetoothctl import Bluetoothctl
 
 app = Flask(__name__)
@@ -50,6 +51,15 @@ def login():
         db.close()
         return '?'
 
+@app.route('/scan', methods=['POST'])
+def scan():
+    result = _pass_auth()
+    if result != 0 : return result
+
+    bl.start_scan()
+    time.sleep(5)
+    discoverables = bl.get_discoverable_devices()
+    return discoverables
 
 if __name__ == '__main__':
     bl = Bluetoothctl()
