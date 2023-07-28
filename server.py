@@ -7,6 +7,23 @@ app = Flask(__name__)
 
 _LENGTH = 10
 
+def _check_auth(auth_key):
+    db = open('db.txt', 'r')
+    if auth_key in db.read() :
+        db.close()
+        return True
+    
+    db.close()
+    return False
+
+def _pass_auth() :
+    # Auth part
+    if len(request.get_data()) == 0 : return 'Login First!!'
+    else:
+        keys = json.loads(request.get_data(), encoding='utf-8')
+        if not _check_auth(keys['key']) : return 'Key fails'
+    return 0
+
 @app.route('/')
 def index():
     return "뭐"
