@@ -2,6 +2,7 @@ from flask import Flask, request, json
 import subprocess
 import string
 import random
+from Bluetoothctl import Bluetoothctl
 
 app = Flask(__name__)
 
@@ -51,6 +52,8 @@ def login():
 
 
 if __name__ == '__main__':
+    bl = Bluetoothctl()
+
     db = open('db.txt', 'w')
     db.close()
 
