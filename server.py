@@ -9,6 +9,13 @@ app = Flask(__name__)
 
 _LENGTH = 10
 
+#*Index---------------------------------------
+@app.route('/')
+def index():
+    return "뭐"
+#---------------------------------------------
+
+#*Auth part-----------------------------------
 def _check_auth(auth_key):
     db = open('db.txt', 'r')
     if auth_key in db.read() :
@@ -19,16 +26,11 @@ def _check_auth(auth_key):
     return False
 
 def _pass_auth() :
-    # Auth part
     if len(request.get_data()) == 0 : return 'Login First!!'
     else:
         keys = json.loads(request.get_data(), encoding='utf-8')
         if not _check_auth(keys['key']) : return 'Key fails'
     return 0
-
-@app.route('/')
-def index():
-    return "뭐"
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -50,7 +52,9 @@ def login():
     else:
         db.close()
         return '?'
+#----------------------------------------------
 
+#*Bluetooth control----------------------------
 @app.route('/scan', methods=['POST'])
 def scan():
     result = _pass_auth()
@@ -60,6 +64,7 @@ def scan():
     time.sleep(5)
     discoverables = bl.get_discoverable_devices()
     return discoverables
+#----------------------------------------------
 
 if __name__ == '__main__':
     bl = Bluetoothctl()
