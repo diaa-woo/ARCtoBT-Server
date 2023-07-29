@@ -64,10 +64,39 @@ def scan():
     time.sleep(5)
     discoverables = bl.get_discoverable_devices()
     return discoverables
+
+@app.route('/connect', methods=['POST'])
+def connect():
+    global paireds
+
+    result = _pass_auth()
+    if result != 0 : return result
+
+    mac_addr = json.loads(request.get_data(), encoding='utf-8')['mac_addr']
+    for device in paireds:
+        if device["mac_address"] == mac_addr : 
+            bl.connect(mac_addr)
+            return "Done!"
+    
+    result = bl.pair(mac_addr)
+    if result == False : bl.connect(mac_addr)
+    return "Um"
+
+@app.route('/disconnect', methods=['POST'])
+def disconnect():
+    result = _pass_auth()
+    if result != 0 : return result
+    
+    mac_addr = json.loads(request.get_data(), encoding='utf-8')['mac_addr']
+    status = bl.disconnect(mac_addr)
+
+    if status == False : return "Fail"
+    return "Done!"
 #----------------------------------------------
 
 if __name__ == '__main__':
     bl = Bluetoothctl()
+    paireds = bl.get_paired_devices()
 
     db = open('db.txt', 'w')
     db.close()
