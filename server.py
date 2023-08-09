@@ -28,7 +28,7 @@ def _check_auth(auth_key):
 def _pass_auth() :
     if len(request.get_data()) == 0 : return 'Login First!!'
     else:
-        keys = json.loads(request.get_data(), encoding='utf-8')
+        keys = json.loads(request.get_data())
         if not _check_auth(keys['key']) : return 'Key fails'
     return 0
 
@@ -37,7 +37,7 @@ def login():
     db = open('db.txt', 'a')
     if len(request.get_data()) == 0:
         return 'null'
-    params = json.loads(request.get_data(), encoding='utf-8')
+    params = json.loads(request.get_data())
     
     print(params)
 
@@ -55,6 +55,13 @@ def login():
 #----------------------------------------------
 
 #*Bluetooth control----------------------------
+@app.route('/paired', methods=['POST'])
+def paired():
+    result = _pass_auth()
+    if result != 0 : return result
+
+    return paireds
+
 @app.route('/scan', methods=['POST'])
 def scan():
     result = _pass_auth()
@@ -72,7 +79,7 @@ def connect():
     result = _pass_auth()
     if result != 0 : return result
 
-    mac_addr = json.loads(request.get_data(), encoding='utf-8')['mac_addr']
+    mac_addr = json.loads(request.get_data())['mac_addr']
     for device in paireds:
         if device["mac_address"] == mac_addr : 
             bl.connect(mac_addr)
@@ -87,7 +94,7 @@ def disconnect():
     result = _pass_auth()
     if result != 0 : return result
     
-    mac_addr = json.loads(request.get_data(), encoding='utf-8')['mac_addr']
+    mac_addr = json.loads(request.get_data())['mac_addr']
     status = bl.disconnect(mac_addr)
 
     if status == False : return "Fail"
