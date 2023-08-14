@@ -2,6 +2,7 @@ from flask import Flask, request, json
 import subprocess
 import string
 import random
+from multiprocessing import Process
 import time
 from Bluetoothctl import Bluetoothctl
 
@@ -95,9 +96,8 @@ def disconnect():
     if result != 0 : return result
     
     mac_addr = json.loads(request.get_data())['mac_addr']
-    status = bl.disconnect(mac_addr)
-
-    if status == False : return "Fail"
+    bl.disconnect(mac_addr)
+    
     return "Done!"
 #----------------------------------------------
 
